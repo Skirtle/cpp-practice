@@ -236,11 +236,39 @@ int _23bitToInt(std::bitset<23> bits) {
 	return num;
 }
 
-/*std::bitset<8> int_to_8bit(int decimal) {
-	if ()
-}*/
+std::bitset<8> uint_to_8bit(int decimal) {
+	std::bitset<8> binary = std::bitset<8>(0);
+	if (decimal < 0) return binary;
 
-float IEEE754_to_decimal(std::bitset<32> num) {
+	int currDec = decimal;
+	int index = 7;
+	while (index >= 0) {
+		int diff = currDec - (int)pow(2, index);
+		if (diff >= 0) {
+			binary.set(index, 1);
+			currDec -= (int)pow(2, index);
+		}
+
+		index--;
+	}
+
+	return binary;
+}
+
+int largest_power_of_2(float x) {
+	int power = 0;
+	int curr = 1;
+
+	while (curr < x) {
+		curr *= 2;
+		power++;
+	}
+
+
+	return power - 1;
+}
+
+float IEEE754_single_to_decimal(std::bitset<32> num) {
 	const int floatSize = 32;
 	const int exponentSize = 8;
 	const int mantissaSize = 23;
@@ -268,10 +296,43 @@ float IEEE754_to_decimal(std::bitset<32> num) {
 	return (1 + fraction) * pow(2, _8bitToInt(exponent) - bias) * ((sign[0] == 1) ? -1 : 1);
 }
 
-std::bitset<32> decimal_to_IEEE754(float decimal) {
-	int whole;
-	float frac;
+std::bitset<32> decimal_to_IEEE754_single(double decimal) {
+	int sign = 0;
+	if (decimal < 0) {
+		sign = 1;
+		decimal *= -1;
+	}
 
-	return std::bitset<32>();
+	// Get exponent as binary
+	int largestPower = largest_power_of_2(decimal);
+	int decimalExponent = 127 + largestPower;
+	std::bitset<8> binaryExponent = uint_to_8bit(decimalExponent);
+
+
+	// Get mantissa as binary
+	std::bitset<23> binaryMantissa = std::bitset<23>(0);
+	double currDec = (decimal / (int)pow(2, largestPower)) - 1;
+	for (int i = 22; i >= 0; i--) {
+		// std::cout << currDec << " * 2 = " << currDec * 2 << " -> " << ((currDec >= 1) ? 1 : 0) << "\n";
+		currDec *= 2;
+		if (currDec >= 1) {
+			currDec -= 1;
+			binaryMantissa.set(i, 1);
+		}
+		if (currDec == 0) break;
+	}
+
+	// Set bits
+	std::bitset<32> binaryFloat = std::bitset<32>(0);
+	binaryFloat.set(31, sign);
+	for (int expoIndex = 7, floatIndex = 30; expoIndex >= 0; expoIndex--, floatIndex--) {
+		binaryFloat.set(floatIndex, binaryExponent[expoIndex]); // FIX
+	}
+	for (int index = 22; index >= 0; index--) {
+		binaryFloat.set(index, binaryMantissa[index]); // FIX
+	}
+
+
+	return binaryFloat;
 }
 
