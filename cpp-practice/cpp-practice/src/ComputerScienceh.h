@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <bitset>
 
 template <typename T>
 class Node {
@@ -216,3 +217,61 @@ public:
 	}
 
 };
+
+int _8bitToInt(std::bitset<8> bits) {
+	int num = 0;
+	for (int i = 0; i < 8; i++) {
+		num += bits[i] * (int) (pow(2, i));
+	}
+
+	return num;
+}
+
+int _23bitToInt(std::bitset<23> bits) {
+	int num = 0;
+	for (int i = 0; i < 23; i++) {
+		num += bits[i] * (int)(pow(2, i));
+	}
+
+	return num;
+}
+
+/*std::bitset<8> int_to_8bit(int decimal) {
+	if ()
+}*/
+
+float IEEE754_to_decimal(std::bitset<32> num) {
+	const int floatSize = 32;
+	const int exponentSize = 8;
+	const int mantissaSize = 23;
+	const int bias = 127;
+
+	std::bitset<floatSize> number = num;
+	std::bitset<1> sign;
+	std::bitset<exponentSize> exponent;
+	std::bitset<mantissaSize> mantissa;
+	float fraction = 0;
+
+	sign.set(0, number[floatSize-1]);
+	for (int i = mantissaSize, j = 0; i < floatSize - 1; i++, j++) {
+		exponent.set(j, number[i]);
+	}
+
+	for (int i = 0; i < mantissaSize; i++) {
+		mantissa.set(i, number[i]);
+	}
+
+	int expo = _8bitToInt(exponent) - bias;
+	for (int i = mantissaSize - 1; i >= 0; i--) {
+		fraction += mantissa[i] * pow(2, -(mantissaSize -i));
+	}
+	return (1 + fraction) * pow(2, _8bitToInt(exponent) - bias) * ((sign[0] == 1) ? -1 : 1);
+}
+
+std::bitset<32> decimal_to_IEEE754(float decimal) {
+	int whole;
+	float frac;
+
+	return std::bitset<32>();
+}
+
