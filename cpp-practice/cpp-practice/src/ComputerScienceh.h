@@ -154,10 +154,10 @@ public:
 		if (top < 0) return NULL;
 		return stack[top];
 	}
-	bool isEmpty() {
+	bool is_empty() {
 		return top == -1;
 	}
-	bool isFull() {
+	bool is_full() {
 		return top == maxSize - 1;
 	}
 };
@@ -209,16 +209,16 @@ public:
 		if (size == 0) return NULL;
 		return queue[0];
 	}
-	bool isEmpty() {
+	bool is_empty() {
 		return size == 0;
 	}
-	bool isFull() {
+	bool is_full() {
 		return size == maxSize;
 	}
 
 };
 
-int _8bitToInt(std::bitset<8> bits) {
+int _8bit_to_int(std::bitset<8> bits) {
 	int num = 0;
 	for (int i = 0; i < 8; i++) {
 		num += bits[i] * (int) (pow(2, i));
@@ -227,7 +227,7 @@ int _8bitToInt(std::bitset<8> bits) {
 	return num;
 }
 
-int _23bitToInt(std::bitset<23> bits) {
+int _23bit_to_int(std::bitset<23> bits) {
 	int num = 0;
 	for (int i = 0; i < 23; i++) {
 		num += bits[i] * (int)(pow(2, i));
@@ -289,11 +289,11 @@ float IEEE754_single_to_decimal(std::bitset<32> num) {
 		mantissa.set(i, number[i]);
 	}
 
-	int expo = _8bitToInt(exponent) - bias;
+	int expo = _8bit_to_int(exponent) - bias;
 	for (int i = mantissaSize - 1; i >= 0; i--) {
 		fraction += mantissa[i] * pow(2, -(mantissaSize -i));
 	}
-	return (1 + fraction) * pow(2, _8bitToInt(exponent) - bias) * ((sign[0] == 1) ? -1 : 1);
+	return (1 + fraction) * pow(2, _8bit_to_int(exponent) - bias) * ((sign[0] == 1) ? -1 : 1);
 }
 
 std::bitset<32> decimal_to_IEEE754_single(double decimal) {
@@ -311,9 +311,12 @@ std::bitset<32> decimal_to_IEEE754_single(double decimal) {
 
 	// Get mantissa as binary
 	std::bitset<23> binaryMantissa = std::bitset<23>(0);
-	double currDec = (decimal / (int)pow(2, largestPower)) - 1;
+	if (largestPower < 0) largestPower = 0;
+	double currDec = (decimal / (int)pow(2, largestPower));
+	if (currDec >= 1) currDec--;
+	// std::cout << "largestPower = " << largestPower << "\n";
 	for (int i = 22; i >= 0; i--) {
-		// std::cout << currDec << " * 2 = " << currDec * 2 << " -> " << ((currDec >= 1) ? 1 : 0) << "\n";
+		// std::cout << currDec << " * 2 = " << currDec * 2 << " -> " << ((currDec * 2 >= 1) ? 1 : 0) << "\n";
 		currDec *= 2;
 		if (currDec >= 1) {
 			currDec -= 1;
