@@ -20,3 +20,5 @@ cpp-practice/.vs/cpp-practice/v17/.suo
 *.tlog
 *.log
 *.ilk
+*.lock
+*.vsidx
