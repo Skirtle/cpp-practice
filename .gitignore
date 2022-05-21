@@ -7,3 +7,16 @@
 *.vcxproj
 *.filters
 *.user
+*.ipch
+cpp-practice/.vs/cpp-practice/v17/.suo
+*.recipe
+*.obj
+*.idb
+*.pdb
+*.pdb
+*.exe
+*.exe
+*.lastbuildstate
+*.tlog
+*.log
+*.ilk
