@@ -296,6 +296,7 @@ float IEEE754_single_to_decimal(std::bitset<32> num) {
 	return (1 + fraction) * pow(2, _8bit_to_int(exponent) - bias) * ((sign[0] == 1) ? -1 : 1);
 }
 
+// Cannot convert for numbers between -1 and 1, need to fix
 std::bitset<32> decimal_to_IEEE754_single(double decimal) {
 	int sign = 0;
 	if (decimal < 0) {
@@ -329,13 +330,47 @@ std::bitset<32> decimal_to_IEEE754_single(double decimal) {
 	std::bitset<32> binaryFloat = std::bitset<32>(0);
 	binaryFloat.set(31, sign);
 	for (int expoIndex = 7, floatIndex = 30; expoIndex >= 0; expoIndex--, floatIndex--) {
-		binaryFloat.set(floatIndex, binaryExponent[expoIndex]); // FIX
+		binaryFloat.set(floatIndex, binaryExponent[expoIndex]);
 	}
 	for (int index = 22; index >= 0; index--) {
-		binaryFloat.set(index, binaryMantissa[index]); // FIX
+		binaryFloat.set(index, binaryMantissa[index]);
 	}
 
 
 	return binaryFloat;
 }
 
+void print_IEEE754_single(std::bitset<32> bits) {
+	std::cout << bits[31] << " ";
+	for (int i = 30; i >= 23; i--) {
+		std::cout << bits[i];
+	}
+
+	std::cout << " ";
+	for (int i = 22; i >= 0; i--) {
+		std::cout << bits[i];
+	}
+	std::cout << "\n";
+}
+
+void print_IEEE754_single(std::string bits) {
+	std::cout << bits[31] << " ";
+	for (int i = 30; i >= 23; i--) {
+		std::cout << bits[i];
+	}
+
+	std::cout << " ";
+	for (int i = 22; i >= 0; i--) {
+		std::cout << bits[i];
+	}
+	std::cout << "\n";
+}
+
+double map(double val, double oldStart, double oldEnd, double newStart, double newEnd) {
+	return newStart + (newEnd - newStart) * ((val - oldStart) / (oldEnd - oldStart));
+}
+
+long long factorial(long long x) {
+	if (x <= 0) return 1;
+	return x * factorial(x - 1);
+}
